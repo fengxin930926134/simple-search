@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>simpleSearch</title>
+    <link rel="stylesheet" href="./index.css">
+    <link rel="shortcut icon" href="./logo.ico" type="image/x-icon">
+</head>
+<body>
+    <div id="app">
+        <!-- 提示信息 -->
+        <transition>
+            <p v-if="isInfo" class="info" v-cloak>{{ infoText }}</p>
+        </transition>
+    
+        <!-- 搜索框 -->
+        <section class="searchBox">
+            <div class="inputBox">
+                <input type="text" placeholder="Search" id="searchInput" v-model="queryString" v-on:keyup.enter="search">
+                <img src="./search.png" alt="" @click="search">
+            </div>
+        </section>
+    </div>
+</body>
+<script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
+<script>
+    const vm = new Vue({
+        el:"#app",
+        data:{
+            queryString:"", // 查询字符串
+            isInfo:false, // 是否显示提示信息
+            infoText:"", // 要显示的提示信息
+        },
+        mounted() {
+            
+        },
+        methods: {
+            // 按下enter键或点击搜索图标进行搜索
+            search:function(){
+                if(this.queryString === ""){  
+                    this.infoText = "输入的内容不能为空！";                  
+                    this.isInfo = true;
+                    let that = this;
+                    // 1200毫秒之后关闭提示信息
+                    setTimeout(function(){
+                        that.isInfo = false;
+                    }, 1200);
+                }else{
+                    this.queryString = "";
+                    // 在当前窗口打开
+                    // window.location.href = "https://www.baidu.com/s?ie=UTF-8&wd=" + this.queryString;
+
+                    // 在新窗口打开
+                    window.open("https://www.baidu.com/s?ie=UTF-8&wd=" + this.queryString);
+                }
+            }
+        },
+    });
+</script>
+</html>
