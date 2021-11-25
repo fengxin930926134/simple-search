@@ -9,38 +9,96 @@
     <link rel="shortcut icon" href="./static/logo.ico" type="image/x-icon">
 </head>
 <body>
-    <div id="app" style="width: 100%; height: 100%; position: absolute; display: flex; justify-content: center; align-items: center;">
-        <!-- 搜索框 -->
-        <div class="inputBox" style="margin-bottom: 5%;">
-        	<input type="text" placeholder="Search" id="searchInput" v-model="queryString" v-on:keyup.enter="search">
-        	<img src="./static/search.png" alt="" @click="search">
-        </div>
+	<div id="app">
+		<div style="width: 100%; height: 100%; position: absolute; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+			<div class="inputTab" style="width: 40%;">
+				<ul>
+					<li v-for="(item, index) in tabList" @click="changeTab(index)" 
+					:style="item.active?'background-color: rgba(255, 255, 255, 0.6);':''">{{item.name}}</li>
+				</ul>
+			</div>
+			<!-- 搜索框 -->
+			<div class="inputBox" style="margin-bottom: 5%;">
+				<input type="text" placeholder="Search" v-model="queryString" v-on:keyup.enter="search">
+				<img src="./static/search.png" alt="" @click="search">
+			</div>
+		</div>
 		<!-- 底部备案 -->
-		<p style="background:none;height: 5%;position: fixed;bottom: 0px;width: 100%;text-align: center;">
+		<p style="background:none; height: 5%; min-height: 28px; position: fixed;bottom: 0px;width: 100%;text-align: center;">
 				<a style="color:#afafaf;" href="https://beian.miit.gov.cn/" target="_blank">黔ICP备2021008342号-1</a></p>
-    </div>
+	</div>
 </body>
 <script src="./static/vue.min.js"></script>
 <script>
     const vm = new Vue({
         el:"#app",
         data:{
+			queryPrefix:"",	// 地址前缀
             queryString:"", // 查询字符串
+			tabList: [
+				{
+					name:"百度",
+					query: "https://www.baidu.com/s?ie=UTF-8&wd=",
+					active: false
+				},
+				{
+					name:"谷歌",
+					query: "https://www.google.com/search?ie=UTF-8&q=",
+					active: false
+				},
+				{
+					name:"必应",
+					query: "https://www.bing.com/search?mkt=zh-CN&q=",
+					active: false
+				},
+				{
+					name:"搜狗",
+					query: "https://www.sogou.com/web?query=",
+					active: false
+				},
+				{
+					name:"360",
+					query: "https://www.so.com/s?q=",
+					active: false
+				},
+				{
+					name:"学术",
+					query: "https://scholar.google.com/scholar?q=",
+					active: false
+				}
+			]
         },
+		created() {
+			this.queryPrefix = this.tabList[0].query
+			this.tabList[0].active = true
+		},
         methods: {
-            // 按下enter键或点击搜索图标进行搜索
-            search:function(){
-                if(this.queryString !== ""){
-					// 在当前窗口打开
-					// window.location.href = "https://www.baidu.com/s?ie=UTF-8&wd=" + this.queryString;
-					
-					// 在新窗口打开
-					window.open("https://www.baidu.com/s?ie=UTF-8&wd=" + this.queryString);
-					
-					// 还原搜索条件
-					this.queryString = "";
-                }
-            }
+			/**
+			 * 搜索
+			 */
+            search: function() {
+				// 在当前窗口打开
+				// window.location.href = "https://www.baidu.com/s?ie=UTF-8&wd=" + this.queryString;
+				
+				// 在新窗口打开
+				window.open(this.queryPrefix + this.queryString);
+				
+				// 还原搜索条件
+				this.queryString = "";
+            },
+			/**
+			 * 切换tab
+			 */
+			changeTab(index) {
+				this.queryPrefix = this.tabList[index].query
+				this.restoreAllActive()
+				this.tabList[index].active = true
+			},
+			restoreAllActive() {
+				this.tabList.forEach(item => {
+					item.active = false
+				})
+			}
         },
     });
 </script>
